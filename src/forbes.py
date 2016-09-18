@@ -4,8 +4,10 @@
     about your current income.
 """
 
+import json
 
-def age_check(json):
+
+def age_check():
     """
     This function returns an dictionary object of the stats of the youngest
     billionaire older than 0 on the forbes billionaire list.
@@ -13,7 +15,7 @@ def age_check(json):
     youngest = 80
     output = {}
 
-    with open('forbes_billionaires_2016.json') as data_file:
+    with open('../data/forbes_billionaires_2016.json') as data_file:
         data = (json.loads(data_file.read()))
 
     for val in data:
@@ -22,5 +24,12 @@ def age_check(json):
             output = val
         else:
             pass
-            return '{} is the youngest billionaire on this list with a fortune \
-            made in {} and a networth of {}.' % output['name'], output['industry'], output['networth']
+    nw = str(output['net_worth (USD)'])[0:3]
+    nw = float(nw[0:2] + '.' + nw[2:3])
+    result = '{} is the youngest billionaire on this list with a fortune made \
+from {} and a networth of {:.1f} billion dollars.'.format(
+            output['name'],
+            output['source'],
+            nw
+            )
+    return result
