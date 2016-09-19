@@ -28,7 +28,7 @@ def age_check():
             output = val
         elif val['age'] < 80:
             oldest_diff = 80 - val['age']
-            if current_oldest < oldest_diff:
+            if current_oldest < oldest_diff and val['age'] > 0:
                 current_oldest = oldest_diff
                 output2 = val
     nw = str(output['net_worth (USD)'])[0:3]
