@@ -4,6 +4,7 @@
     about your current income.
 """
 
+
 import json
 
 
@@ -27,7 +28,7 @@ def age_check():
     nw = str(output['net_worth (USD)'])[0:3]
     nw = float(nw[0:2] + '.' + nw[2:3])
     result = '{} is the youngest billionaire on this list with a fortune made \
-from {} and a networth of {:.1f} billion dollars.'.format(
+from {} and a net worth of {:.1f} billion dollars.'.format(
             output['name'],
             output['source'],
             nw
