@@ -14,7 +14,10 @@ def age_check():
     billionaire older than 0 on the forbes billionaire list.
     """
     youngest = 80
+    oldest_diff = 80
+    current_oldest = 80
     output = {}
+    output2 = {}
 
     with open('../data/forbes_billionaires_2016.json') as data_file:
         data = (json.loads(data_file.read()))
@@ -23,17 +26,28 @@ def age_check():
         if val['age'] < youngest and val['age'] > 0:
             youngest = val['age']
             output = val
-        else:
-            pass
+        elif val['age'] < 80:
+            oldest_diff = 80 - val['age']
+            if current_oldest < oldest_diff:
+                current_oldest = oldest_diff
+                output2 = val
     nw = str(output['net_worth (USD)'])[0:3]
     nw = float(nw[0:2] + '.' + nw[2:3])
-    result = '{} is the youngest billionaire on this list with a fortune made \
-from {} and a net worth of {:.1f} billion dollars.'.format(
+    nw2 = str(output2['net_worth (USD)'])[0:3]
+    nw2 = float(nw2[0:2] + '.' + nw2[2:3])
+    result1 = '{} is the youngest billionaire on this list with a fortune made \
+    from {} and a net worth of {:.1f} billion dollars.'.format(
             output['name'],
             output['source'],
             nw
             )
-    return result
+    result2 = '{} is the oldest billionaire under 85 on this list with a\
+    fortune made from {} and a net worth of {:.1f} billion dollars.'.format(
+            output2['name'],
+            output2['source'],
+            nw
+            )
+    return result1, result2
 
 if __name__ == '__main__':
     age_check()
