@@ -33,3 +33,6 @@ from {} and a networth of {:.1f} billion dollars.'.format(
             nw
             )
     return result
+
+if __name__ == '__main__':
+    age_check()
