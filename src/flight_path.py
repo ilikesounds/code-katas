@@ -9,7 +9,7 @@ https://github.com/Bl41r/code-katas
 
 import json
 import io
-
+from simple_graph import SimpleGraph, Node
 
 
 def calculate_distance(point1, point2):
@@ -50,3 +50,30 @@ def get_json_data(json_file):
         entry['lat-lon'] = location['lat_lon']
         city_list.append(entry)
     return city_list
+
+
+def build_graph(new_data):
+    """Build a city airport graph."""
+    city_graph = SimpleGraph()
+
+    for city in new_data:
+        city_graph_node = Node(city['city'], city['lat-lon'])
+        try:
+            city_graph.add_node(city_graph_node)
+        except KeyError:
+            pass
+
+    for city in new_data:
+        if city['city'] not in city_graph.node_dict.keys():
+            continue
+        key = city['city']
+        for neighbor in city['neighbors']:
+            try:
+                distance = calculate_distance(
+                    city_graph.node_dict[key].data,
+                    city_graph.node_dict[neighbor].data
+                    )
+            except KeyError:
+                continue
+            city_graph.node_dict[key].neighbors.append((neighbor, distance))
+    return city_graph
