@@ -28,12 +28,13 @@ def calculate_distance(point1, point2):
 
     radius_earth = 6.371E3  # km
     phi1 = convert_to_radians(point1[0])
+    phi2 = convert_to_radians(point2[0])
     delta_phi = convert_to_radians(point1[0] - point2[0])
     delta_lam = convert_to_radians(point1[1] - point2[1])
 
-    a = math.sin(0.5 * delta_phi)**2 + math.cos(phi1) * math.sin(
-        0.5 * delta_lam
-        )**2
+    a = math.sin(0.5 * delta_phi)**2 + math.cos(phi1) * \
+        math.cos(phi2) * math.sin(0.5 * delta_lam)**2
+
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return radius_earth * c / 1.60934  # convert km to miles
 
@@ -52,7 +53,7 @@ def get_json_data(json_file):
     return city_list
 
 
-def build_graph(new_data):
+def build_city_graph(new_data):
     """Build a city airport graph."""
     city_graph = SimpleGraph()
 
@@ -77,3 +78,33 @@ def build_graph(new_data):
                 continue
             city_graph.node_dict[key].neighbors.append((neighbor, distance))
     return city_graph
+
+
+def flight_path_distance(city_graph, origin, destination):
+    """
+    This function provides the flight path distance using a depth first
+    traversal on the city_graph using an origin and destination.
+    """
+    current_location = [origin]
+    temp = []
+    path = []
+    distance = 0
+
+    while len(current_location):
+        current = current_location.pop()
+        temp.append(current.name)
+        path.append(current.name)
+        if len(path) > 1:
+            distance += calculate_distance(
+                city_graph.node_dict[path[-2]].data,
+                city_graph.node_dict[path[-1]].data
+                )
+        if current.name == destination.name:
+            break
+        if len(current.neighbors) == 0:
+            path = [origin.name]
+            distance = 0
+        for city in current.neighbors:
+            if city_graph.node_dict[city[0]].name not in temp:
+                current_location.append(city_graph.node_dict[city[0]])
+    return path, distance
