@@ -3,9 +3,13 @@ Flight path module for code kata assignment.
 
 Simple Graph taken from data-structures assignment.
 
-Thanks to Dave Smith for help with this assignment:
+Thanks to Dave Smith for all his help with this assignment:
 https://github.com/Bl41r/code-katas
 """
+
+import json
+import io
+
 
 
 def calculate_distance(point1, point2):
@@ -32,3 +36,17 @@ def calculate_distance(point1, point2):
         )**2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return radius_earth * c / 1.60934  # convert km to miles
+
+
+def get_json_data(json_file):
+    """Retrieve cities from the supplied json file"""
+    with io.open(json_file) as json_data:
+        data = json.load(json_data)
+    city_list = []
+    for location in data:
+        entry = {}
+        entry['city'] = location['city']
+        entry['neighbors'] = location['destination_cities']
+        entry['lat-lon'] = location['lat_lon']
+        city_list.append(entry)
+    return city_list
