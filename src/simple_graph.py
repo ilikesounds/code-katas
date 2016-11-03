@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Simple graph implementation.
-Simple edge-weighted graph data type which contains a dict of nodes.
-Nodes are a class, which makes them adaptable for additional attributes to be
-added. In this implementation, weight is a positive integer directional edge.
-This branch features two shortest path algorithms, spt_Dijkstra and spt_AStar.
+"""
+Simple graph implementation.
 """
 from __future__ import unicode_literals
-import sys
-import timeit
 
 
 class Node(object):
@@ -34,7 +29,11 @@ class Node(object):
         """Return a list of strings indicating its neighbors."""
         output = []
         for n in self.neighbors:
-            output.append("{} to {}, weight = {}".format(self.name, n[0], n[1]))
+            output.append("{} to {}, weight = {}".format(
+                self.name,
+                n[0],
+                n[1]
+                ))
         return output
 
 
@@ -137,7 +136,9 @@ class SimpleGraph(object):
                 if self.node_dict[n2.name].name in item:
                     return True
         except KeyError:
-            raise ValueError('Graph does not contain both nodes.  Use has_node method.')
+            raise ValueError(
+                'Graph does not contain both nodes.  Use has_node method.'
+                )
         except AttributeError:
             raise TypeError('Must pass node types to adjacent method.')
         return False
@@ -223,7 +224,6 @@ def spt_Dijkstra(graph, start_node_name, end_node_name):
     distances[curr_node.name] = 0
 
     while curr_node is not None:
-        #print('distances:', distances)
         tmp = []
         for n in graph.neighbors(curr_node):
             if n not in visited_set:
@@ -231,7 +231,6 @@ def spt_Dijkstra(graph, start_node_name, end_node_name):
             distances[n[0]] = min(distances[n[0]], distances[curr_node.name] + graph.weight(curr_node, graph.node_dict[n[0]]))
         visited_set.add(curr_node.name)
         curr_node = graph.node_dict[shortest_path(graph, distances, visited_set)]
-        #print('curr node now is:', curr_node.name)
 
         if curr_node is not None:
             if curr_node.name == end_node_name:
@@ -252,7 +251,6 @@ def spt_AStar(graph, start_node_name, end_node_name):
     distances[curr_node.name] = 0
 
     while curr_node is not None:
-        #print('distances:', distances)
         tmp = []
         for n in graph.neighbors(curr_node):
             if n not in visited_set:
@@ -260,7 +258,6 @@ def spt_AStar(graph, start_node_name, end_node_name):
             distances[n[0]] = min(distances[n[0]], distances[curr_node.name] + graph.weight(curr_node, graph.node_dict[n[0]]))
         visited_set.add(curr_node.name)
         curr_node = graph.node_dict[shortest_path(graph, distances, visited_set, True)]
-        #print('curr node now is:', curr_node.name)
 
         if curr_node is not None:
             if curr_node.name == end_node_name:
@@ -269,71 +266,3 @@ def spt_AStar(graph, start_node_name, end_node_name):
     if distances[end_node_name] == float('inf'):
         return None
     return distances[end_node_name]
-
-
-if __name__ == '__main__':  # pragma: no cover
-    if len(sys.argv) != 2:
-        print('usage: "python3 simple_graph.py <demo-type>" <demo-type> can be either circular, tree, or struct.')
-        sys.exit(1)
-
-    # build graph with nodes
-    a = Node('a_node')
-    b = Node('b_node')
-    c = Node('c_node')
-    d = Node('d_node')
-    e = Node('e_node')
-    f = Node('f_node')
-    g = Node('g_node')
-    h = Node('h_node')
-    i = Node('i_node')
-    gr = SimpleGraph()
-    gr.add_node(a)
-    gr.add_node(b)
-    gr.add_node(c)
-    gr.add_node(d)
-    gr.add_node(e)
-    gr.add_node(f)
-    gr.add_node(g)
-    gr.add_node(h)
-    gr.add_node(i)
-    gr.add_edge(a, b, 1)
-    gr.add_edge(a, c, 2)
-    gr.add_edge(b, d, 3)
-    gr.add_edge(b, e, 4)
-    gr.add_edge(c, f, 5)
-    gr.add_edge(c, g, 6)
-    gr.add_edge(e, h, 7)
-    gr.add_edge(e, i, 8)
-
-    if sys.argv[1] == 'circular':
-        gr.add_edge(d, a)
-        print('depth:', gr.depth_first_traversal(a))
-        print('breadth', gr.breadth_first_traversal(a))
-        print('10,000 times')
-        t = timeit.timeit(lambda: gr.depth_first_traversal(a), number=10000)
-        print('time for depth:', t)
-        t = timeit.timeit(lambda: gr.breadth_first_traversal(a), number=10000)
-        print('time for breadth:', t)
-        sys.exit(0)
-
-    if sys.argv[1] == 'tree':
-        print('depth:', gr.depth_first_traversal(a))
-        print('breadth', gr.breadth_first_traversal(a))
-        print('10,000 times')
-        t = timeit.timeit(lambda: gr.depth_first_traversal(a), number=10000)
-        print('time for depth:', t)
-        t = timeit.timeit(lambda: gr.breadth_first_traversal(a), number=10000)
-        print('time for breadth:', t)
-        sys.exit(0)
-
-    if sys.argv[1] == 'struct':
-        print('-- graph nodes ' + ('-----' * 7))
-        for n in gr.node_dict:
-            print('node name:', n, 'neighbors:', gr.node_dict[n].neighbors)
-        print('-----' * 10)
-        print('With tree chosen, no nodes are connected circularly.')
-        print('If circular chosen, d_node connects to a_node.')
-        sys.exit(0)
-
-    print('expecting "circular", "tree", or "struct".')
-    sys.exit(1)
